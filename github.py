@@ -68,4 +68,19 @@ class GitHub(object):
         There are many other attrs you can set in the API.
         """
         return self.access('milestones', query=query, data=data)
-
+        
+    def addlabel(self, label, labeldict, issue, logging):
+        """If label does not already exist then add it to GitHub.
+    	Then append the label to the issue.
+    	"""
+    	if label and labeldict and issue:
+           if label not in labeldict:
+	        # GitHub creates the 'url' and 'color' fields for us
+	        self.labels(data={'name': label})
+	        labeldict[label] = 'CREATED' # keep track of it so we don't re-create it
+	        logging.debug("adding label as new label=%s" % label)
+           if 'labels' in issue:
+                issue['labels'].append(label)
+           else:
+                issue['labels'] = [label]
+                
