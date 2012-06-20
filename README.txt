@@ -17,7 +17,9 @@ A sample program uses this to migrate Trac tickets into GitHub Issues.
 
 It creates and merges "Milestones".
 
-It uses Trac "Components" as GitHub "Labels".
+It uses Trac "Components", "Type" and "Priority"s as GitHub "Labels".
+
+N.B. It maps Trac "defect" to GitHub "bug".
 
 It cannot migrate ticket ownership to GitHub Issue "Assignee" since we
 have no way to map customer-specific Trac usernames into global GitHub
