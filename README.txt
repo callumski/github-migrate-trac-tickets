@@ -17,7 +17,7 @@ A sample program uses this to migrate Trac tickets into GitHub Issues.
 
 It creates and merges "Milestones".
 
-It uses Trac "Components", "Type" and "Priority"s as GitHub "Labels".
+It uses Trac "Component"s, "Type"s and "Priority"s as GitHub "Labels".
 
 N.B. It maps Trac "defect" to GitHub "bug".
 
