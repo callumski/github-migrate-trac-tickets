@@ -78,7 +78,7 @@ for (username,) in trac.sql('SELECT DISTINCT owner FROM ticket'):
         logging.debug("Trac ticket owner: %s" % username)
 
 
-# Get GitHub labels; we'll merge Trac components into them
+# Get GitHub labels; we'll merge Trac components and other values into them
 
 logging.info("Getting existing GitHub labels...")
 labels = {}
@@ -126,8 +126,8 @@ for name, description, due, completed in milestones:
 
 # Copy Trac tickets to GitHub issues, keyed to milestones above
 
-tickets = trac.sql('SELECT id, summary, description , owner, milestone, component, status FROM ticket ORDER BY id') # LIMIT 5
-for tid, summary, description, owner, milestone, component, status in tickets:
+tickets = trac.sql('SELECT id, summary, description , owner, milestone, component, status, type, priority FROM ticket ORDER BY id') # LIMIT 5
+for tid, summary, description, owner, milestone, component, status, type, priority in tickets:
     logging.info("Ticket %d: %s" % (tid, summary))
     if description:
         description = description.strip()
@@ -139,14 +139,17 @@ for tid, summary, description, owner, milestone, component, status in tickets:
     if milestone:
         m = milestone_id.get(milestone)
         if m:
-            issue['milestone'] = m
+            issue['milestone'] = m 
     if component:
-        if component not in labels:
-            # GitHub creates the 'url' and 'color' fields for us
-            github.labels(data={'name': component})
-            labels[component] = 'CREATED' # keep track of it so we don't re-create it
-            logging.debug("adding component as new label=%s" % component)
-        issue['labels'] = [component]
+      github.addlabel(component, labels, issue, logging)
+    if type:
+        # Map 'defect' to 'bug'
+    	if type == 'defect':
+    	    type = 'bug'
+    	github.addlabel(type, labels, issue, logging)
+    if priority:
+      github.addlabel(priority, labels, issue, logging)
+
     # We have to create/map Trac users to GitHub usernames before we can assign
     # them to tickets; don't see how to do that conveniently now.
     # if owner.strip():
